@@ -13,8 +13,6 @@
     @RequestMapping("/categorias")
     public class CategoriaController {
 
-
-
         @Autowired
         CategoriaDAO repo;
         @GetMapping()
