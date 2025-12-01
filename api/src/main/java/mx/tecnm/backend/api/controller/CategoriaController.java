@@ -17,7 +17,6 @@
         CategoriaDAO repo;
         @GetMapping()
         public ResponseEntity<List<Categoria>> obtenerCategorias() {
-        // Lógica para obtener la lista de categorías
         List<Categoria> categorias = repo.consultarCategorias();
         return ResponseEntity.ok(categorias);
         
