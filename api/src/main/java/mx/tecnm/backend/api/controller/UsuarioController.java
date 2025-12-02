@@ -51,6 +51,7 @@ public ResponseEntity<String> agregarUsuario(@RequestBody Usuario usuario) {
 
     if (filas == 1) {
         return ResponseEntity.ok("Usuario agregado correctamente :)");
+        
     } else {
         return ResponseEntity.badRequest().body("No se pudo agregar el usuario :(");
     }
