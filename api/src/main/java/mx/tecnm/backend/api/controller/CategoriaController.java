@@ -1,3 +1,12 @@
+    //git status
+    //git add .
+    //git status
+    //git commit -m "creacion de algo"
+    //git pushhhhhhhhhhhhhhhhh
+
+
+    //git pull
+    
     package mx.tecnm.backend.api.controller;
     import java.util.List;
     import org.springframework.beans.factory.annotation.Autowired;
