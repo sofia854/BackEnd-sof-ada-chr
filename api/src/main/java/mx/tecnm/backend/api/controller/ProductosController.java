@@ -13,7 +13,7 @@ import mx.tecnm.backend.api.repository.ProductosDAO;
 
 @RestController
 @RequestMapping("/productos")
-public class ProductosCatroller {
+public class ProductosController {
     
     @Autowired
     ProductosDAO repo;

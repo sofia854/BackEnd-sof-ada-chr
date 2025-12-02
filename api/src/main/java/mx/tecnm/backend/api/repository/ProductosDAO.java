@@ -15,20 +15,23 @@ public class ProductosDAO {
     JdbcClient conexion;
 
 public List<Productos> consultarProductos() {
-        String sql = "SELECT id, nombre, precio, sku, color, marca, descripcion, peso, dimensiones, categoria_id FROM productos";
-        return  (List<Productos>) conexion.sql(sql)
-                .query((rs, rowNum) -> new Productos(
-                        rs.getInt("id"),
-                        rs.getString("nombre"),
-                        rs.getInt("precio"),
-                        rs.getInt("sku"),
-                        rs.getString("color"),
-                        rs.getString("marca"),
-                        rs.getString("descripcion"),
-                        rs.getDouble("peso"),
-                        rs.getDouble("dimensiones"),
-                        rs.getInt("categoria_id")
-                ));
+String sql = "SELECT id, nombre, precio, sku, color, marca, descripcion, peso, alto, ancho, profundidad, categorias_id FROM productos";
+        return conexion.sql(sql)
+        .query((rs, rowNum) -> new Productos(
+                rs.getInt("id"),
+                rs.getString("nombre"),
+                rs.getInt("precio"),
+                rs.getString("sku"),      // ← String
+                rs.getString("color"),
+                rs.getString("marca"),
+                rs.getString("descripcion"),
+                rs.getDouble("peso"),
+                rs.getDouble("alto"),
+                rs.getDouble("ancho"),
+                rs.getDouble("profundidad"),
+                rs.getInt("categorias_id") // ← Nuevo campo
+        ))
+        .list();
     }   
 
 
