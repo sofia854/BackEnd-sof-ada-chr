@@ -5,6 +5,8 @@ public class MetodoPago {
     public String nombre;
     public Double comision;
 
+    public MetodoPago() {}
+
     public MetodoPago(int id, String nombre, Double comision) {
         this.id = id;
         this.nombre = nombre;

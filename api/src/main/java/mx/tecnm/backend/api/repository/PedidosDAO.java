@@ -2,12 +2,15 @@ package mx.tecnm.backend.api.repository;
 import mx.tecnm.backend.api.models.Pedidos;
 import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
-import java.util.List;  
+import java.util.List; 
+import java.sql.Timestamp;
+import java.util.UUID;
+
 
 
 @Repository
 public class PedidosDAO {
-    private list<Pedidos> listaPedidos = new ArrayList<>();
+    private List<Pedidos> listaPedidos = new ArrayList<>();
     private int contadorId = 1;
 
     public List<Pedidos> findAll() {
@@ -42,4 +45,5 @@ public class PedidosDAO {
     public boolean delete(int id) {
         return listaPedidos.removeIf(pedido -> pedido.getId() == id);
 
+}
 }

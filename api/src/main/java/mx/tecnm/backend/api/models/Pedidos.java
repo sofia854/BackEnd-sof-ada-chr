@@ -1,5 +1,9 @@
 package mx.tecnm.backend.api.models;
 
+import java.sql.Timestamp;
+import java.util.UUID;
+
+
 public class Pedidos {
     private int id;
     private Timestamp fecha;
