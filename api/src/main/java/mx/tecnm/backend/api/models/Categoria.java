@@ -1,5 +1,33 @@
 package mx.tecnm.backend.api.models;
 
-public record Categoria(int id, String nombre) { //el record crea constructor, getters, equals, hashcode y toString
+public class Categoria {
+    private int id;
+    private String nombre;
 
+    public Categoria() {
+        // Constructor vacío
+    }
+
+    // Constructor con todos los campos
+    public Categoria(int id, String nombre) {
+        this.id = id;
+        this.nombre = nombre;
+    }
+
+    // Getters y Setters
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 }
