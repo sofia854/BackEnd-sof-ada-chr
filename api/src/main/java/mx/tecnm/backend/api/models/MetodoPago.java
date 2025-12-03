@@ -10,7 +10,15 @@ public class MetodoPago {
         this.nombre = nombre;
         this.comision = comision;
     }
+    public int getId() { return id; }
+    public String getNombre() { return nombre; }
+    public double getComision() { return comision; }
+
+    public void setId(int id) { this.id = id; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+    public void setComision(double comision) { this.comision = comision; }
+}
 
  
  
-}
+
