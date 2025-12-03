@@ -1,7 +1,6 @@
 package mx.tecnm.backend.api.controller;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,9 +39,8 @@ public class PedidosController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePedido(@PathVariable int id) {
-        boolean deleted = pedidosDAO.delete(id);
-
-        if (deleted) {
+        boolean eliminado = pedidosDAO.delete(id);
+        if (eliminado) {
             return ResponseEntity.ok("Pedido eliminado correctamente.");
         } else {
             return ResponseEntity.status(404).body("Pedido no encontrado.");
