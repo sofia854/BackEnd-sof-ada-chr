@@ -17,7 +17,6 @@ public class PedidosDAO {
     @Autowired
     private JdbcClient conexion;
 
-    // Obtener todos los pedidos
     public List<Pedidos> findAll() {
         return conexion.sql("SELECT * FROM pedidos")
                 .query((ResultSet rs) -> {
@@ -29,14 +28,12 @@ public class PedidosDAO {
                 });
     }
 
-    // Obtener pedido por ID
     public Pedidos findById(int id) {
         return conexion.sql("SELECT * FROM pedidos WHERE id = :id")
                 .param("id", id)
                 .query(rs -> rs.next() ? mapRow(rs) : null);
     }
 
-    // Guardar un pedido
     public Pedidos save(Pedidos pedido) {
         UUID numero = pedido.getNumero() != null ? pedido.getNumero() : UUID.randomUUID();
         conexion.sql("""
@@ -59,7 +56,6 @@ public class PedidosDAO {
         return pedido;
     }
 
-    // Actualizar un pedido
     public Pedidos update(int id, Pedidos pedido) {
         int rowsAffected = conexion.sql("""
                 UPDATE pedidos SET fecha = :fecha, numero = :numero, importe_productos = :importe_productos,
@@ -81,7 +77,6 @@ public class PedidosDAO {
         return rowsAffected > 0 ? findById(id) : null;
     }
 
-    // Eliminar un pedido
     public boolean delete(int id) {
         int rowsAffected = conexion.sql("DELETE FROM pedidos WHERE id = :id")
                 .param("id", id)
@@ -89,7 +84,6 @@ public class PedidosDAO {
         return rowsAffected > 0;
     }
 
-    // Mapear ResultSet a objeto Pedidos
     private Pedidos mapRow(ResultSet rs) throws SQLException {
         return new Pedidos(
                 rs.getInt("id"),
