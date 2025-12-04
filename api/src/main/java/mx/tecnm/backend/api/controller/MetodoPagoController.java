@@ -21,31 +21,32 @@ public class MetodoPagoController {
 
     @Autowired
    MetodoPagoDAO metodo;
-
+// Obtener todos los Metodos de Pago
 @GetMapping
     public List<MetodoPago> consultar() {
         return metodo.consultarMetodoPago();
     }
-
+// Obtener Metodo de Pago por ID
     @GetMapping("/{id}")
     public MetodoPago buscarPorId(@PathVariable int id) {
         return metodo.buscarPorId(id);
     }
-
+// Crear Metodo de Pago
     @PostMapping
     public String crear(@RequestBody MetodoPago nuevoMetodo) {
         return metodo.crear(nuevoMetodo) == 1 ? "Creado" : "Error";
     }
-
+// Modificar Metodo de Pago
     @PutMapping("/{id}")
     public String actualizar(@PathVariable int id, @RequestBody MetodoPago metodo) {
         metodo.setId(id);
         return this.metodo.actualizar(metodo) == 1 ? "Actualizado" : "Error";
     }
-
+// Eliminar Metodo de Pago
     @DeleteMapping("/{id}")
     public String eliminar(@PathVariable int id) {
         return metodo.eliminar(id) == 1 ? "Eliminado" : "Error";
     }
+    
 }
 

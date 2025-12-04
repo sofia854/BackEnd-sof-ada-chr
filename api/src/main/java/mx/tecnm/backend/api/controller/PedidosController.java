@@ -1,6 +1,7 @@
 package mx.tecnm.backend.api.controller;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +17,9 @@ public class PedidosController {
     private PedidosDAO pedidosDAO;
 
     @GetMapping
-    public List<Pedidos> getAllPedidos() {
-        return pedidosDAO.findAll();
+    public ResponseEntity<List<Pedidos>> getAllPedidos() {
+        List<Pedidos> pedidos = pedidosDAO.findAll();
+        return pedidos.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(pedidos);
     }
 
     @GetMapping("/{id}")
@@ -27,8 +29,9 @@ public class PedidosController {
     }
 
     @PostMapping
-    public Pedidos createPedido(@RequestBody Pedidos pedido) {
-        return pedidosDAO.save(pedido);
+    public ResponseEntity<Pedidos> createPedido(@RequestBody Pedidos pedido) {
+        Pedidos creado = pedidosDAO.save(pedido);
+        return ResponseEntity.ok(creado);
     }
 
     @PutMapping("/{id}")
@@ -38,12 +41,8 @@ public class PedidosController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePedido(@PathVariable int id) {
+    public ResponseEntity<Void> deletePedido(@PathVariable int id) {
         boolean eliminado = pedidosDAO.delete(id);
-        if (eliminado) {
-            return ResponseEntity.ok("Pedido eliminado correctamente.");
-        } else {
-            return ResponseEntity.status(404).body("Pedido no encontrado.");
-        }
+        return eliminado ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 }
