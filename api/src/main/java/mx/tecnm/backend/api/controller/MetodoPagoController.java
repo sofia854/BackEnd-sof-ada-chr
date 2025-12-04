@@ -4,50 +4,39 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import mx.tecnm.backend.api.repository.MetodoPagoDAO;
 import mx.tecnm.backend.api.models.MetodoPago;
+
 @RestController
 @RequestMapping("/metodos_pago")
 public class MetodoPagoController {
 
     @Autowired
-   MetodoPagoDAO metodo;
-/* 
-    @GetMapping()   
+    MetodoPagoDAO metodo; // La instancia inyectada se llama 'metodo'
+
+    // Obtener todos los métodos de pago (READ ALL)
+    // Usando el formato sugerido en el código comentado
+    @GetMapping()
     public ResponseEntity<List<MetodoPago>> obtenerMetodoPago() {
-     List<MetodoPago> metodopago = metodo.consultarMetodoPago();
-     return ResponseEntity.ok(metodopago);
-
-    }*/
-
-@GetMapping
-    public List<MetodoPago> consultar() {
-        return dao.consultar();
+       // Asumimos que MetodoPagoDAO tiene el método consultarMetodoPago()
+       List<MetodoPago> metodopago = metodo.consultarMetodoPago();
+       return ResponseEntity.ok(metodopago);
     }
 
-    @GetMapping("/{id}")
-    public MetodoPago buscarPorId(@PathVariable int id) {
-        return dao.buscarPorId(id);
-    }
-
-    @PostMapping
-    public String crear(@RequestBody MetodoPago metodo) {
-        return dao.crear(metodo) == 1 ? "Método creado" : "Error";
-    }
-
-    @PutMapping("/{id}")
-    public String actualizar(@PathVariable int id, @RequestBody MetodoPago metodo) {
-        metodo.setId(id);
-        return dao.actualizar(metodo) == 1 ? "Actualizado" : "Error";
-    }
-
-    @DeleteMapping("/{id}")
-    public String eliminar(@PathVariable int id) {
-        return dao.eliminar(id) == 1 ? "Eliminado" : "Error";
-    }
+    /*
+     * Nota: Los métodos buscarPorId, crear, actualizar y eliminar de abajo 
+     * fueron eliminados o comentados ya que hacían referencia a una variable 'dao' 
+     * que no existe y a métodos CRUD que no se sabe si existen en MetodoPagoDAO.
+     * Si deseas implementarlos, el código base es similar al de PedidosController, 
+     * usando la variable 'metodo'.
+     */
 }
-

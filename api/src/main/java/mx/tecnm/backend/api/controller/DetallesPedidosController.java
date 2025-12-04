@@ -2,6 +2,7 @@ package mx.tecnm.backend.api.controller;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import mx.tecnm.backend.api.models.DetallesPedidos;
 import mx.tecnm.backend.api.repository.DetallesPedidosDAO;
 
@@ -19,42 +21,42 @@ import mx.tecnm.backend.api.repository.DetallesPedidosDAO;
 public class DetallesPedidosController {
 
     @Autowired
-    DetallesPedidosDAO detallesPedidos;
+    private DetallesPedidosDAO detallesPedidosDAO;
 
-    // Obtener todos los detalles de pedidos
-    @GetMapping()
-    public ResponseEntity<List<DetallesPedidos>> obtenerDetallesPedidos() {
-        List<DetallesPedidos> lista = detallesPedidos.consultarDetallesPedidos();
-        return ResponseEntity.ok(lista);
+    // GET /detallespedidos
+    @GetMapping
+    public List<DetallesPedidos> getAllDetallesPedidos() {
+        return detallesPedidosDAO.findAll();
     }
 
-    // Obtener un detalle de pedido por ID
+    // GET /detallespedidos/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<DetallesPedidos> obtenerDetallePedidoPorId(@PathVariable int id) {
+    public ResponseEntity<DetallesPedidos> getDetallePedidoById(@PathVariable int id) {
         try {
-            DetallesPedidos detalle = detallesPedidos.consultarDetallePedidoPorId(id);
+            DetallesPedidos detalle = detallesPedidosDAO.findById(id); 
             return ResponseEntity.ok(detalle);
-        } catch (org.springframework.dao.EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
-    // Registrar un nuevo detalle de pedido
-    @PostMapping()
-    public ResponseEntity<String> registrarDetallePedido(@RequestBody DetallesPedidos detalle) {
-        int resultado = detallesPedidos.registrarDetallePedido(detalle);
+    // POST /detallespedidos
+    @PostMapping
+    public ResponseEntity<String> createDetallePedido(@RequestBody DetallesPedidos detalle) {
+        int resultado = detallesPedidosDAO.save(detalle);
         if (resultado > 0) {
             return ResponseEntity.ok("Detalle de Pedido registrado con éxito.");
         } else {
             return ResponseEntity.internalServerError().body("Error al registrar el Detalle de Pedido.");
         }
-    }
-
-    // Actualizar un detalle de pedido (CRUD)
+    } 
+    
+    // PUT /detallespedidos/{id}
     @PutMapping("/{id}")
-    public ResponseEntity<String> actualizarDetallePedido(@PathVariable int id, @RequestBody DetallesPedidos detalle) {
-        detalle.setId(id); // Asegurar que el ID del objeto sea el de la URL
-        int resultado = detallesPedidos.actualizarDetallePedido(detalle);
+    public ResponseEntity<String> updateDetallePedido(@PathVariable int id, @RequestBody DetallesPedidos detalle) {
+        detalle.setId(id);
+        int resultado = detallesPedidosDAO.update(detalle);
+        
         if (resultado > 0) {
             return ResponseEntity.ok("Detalle de Pedido actualizado con éxito.");
         } else if (resultado == 0) {
@@ -63,13 +65,14 @@ public class DetallesPedidosController {
             return ResponseEntity.internalServerError().body("Error al actualizar el Detalle de Pedido.");
         }
     }
-
-    // Eliminar un detalle de pedido por ID (CRUD)
+    
+    // DELETE /detallespedidos/{id}
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminarDetallePedido(@PathVariable int id) {
-        int resultado = detallesPedidos.eliminarDetallePedido(id);
+    public ResponseEntity<String> deleteDetallePedido(@PathVariable int id) {
+        int resultado = detallesPedidosDAO.delete(id);
+        
         if (resultado > 0) {
-            return ResponseEntity.ok("Detalle de Pedido eliminado con éxito.");
+            return ResponseEntity.ok("Detalle de Pedido eliminado correctamente.");
         } else if (resultado == 0) {
             return ResponseEntity.notFound().build();
         } else {
