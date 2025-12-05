@@ -1,44 +1,71 @@
 package mx.tecnm.backend.api.repository;
 
-import java.util.List;
-
+import mx.tecnm.backend.api.models.DetallesCarrito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.simple.JdbcClient;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import mx.tecnm.backend.api.models.DetallesCarrito;
+import java.util.List;
 
 @Repository
 public class DetallesCarritoDAO {
+
     @Autowired
-    JdbcClient conexion;
+    private JdbcTemplate conexion;
 
-    public List<DetallesCarrito> consultarDetallesCarrito() {
+    private final RowMapper<DetallesCarrito> mapper = (rs, rowNum) -> {
+        DetallesCarrito d = new DetallesCarrito();
+        d.setId(rs.getInt("id"));
+        d.setCantidad(rs.getInt("cantidad"));
+        d.setProductosId(rs.getInt("productos_id"));
+        d.setUsuariosId(rs.getInt("usuarios_id"));
+        return d;
+    };
 
-        String sql = "SELECT id, cantidad, productos_id, usuarios_id FROM detalles_carrito";
-
-        return conexion.sql(sql)
-                .query((rs, rowNum) -> new DetallesCarrito(
-                        rs.getInt("id"),
-                        rs.getInt("cantidad"),
-                        rs.getInt("productos_id"),
-                        rs.getInt("usuarios_id")
-                ))
-                .list();
+    // GET ALL
+    public List<DetallesCarrito> consultarTodos() {
+        String sql = "SELECT * FROM detalles_carrito ORDER BY id DESC";
+        return conexion.query(sql, mapper);
     }
 
-    public DetallesCarrito consultarDetalleCarritoPorId(int id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'consultarDetalleCarritoPorId'");
+    // GET BY ID
+    public DetallesCarrito consultarPorId(int id) {
+        String sql = "SELECT * FROM detalles_carrito WHERE id = ?";
+        return conexion.queryForObject(sql, mapper, id);
     }
 
-    public int actualizarDetalleCarrito(DetallesCarrito detallecarrito) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'actualizarDetalleCarrito'");
+    // POST
+    public int registrar(DetallesCarrito d) {
+        String sql = """
+            INSERT INTO detalles_carrito (cantidad, productos_id, usuarios_id)
+            VALUES (?, ?, ?)
+        """;
+        return conexion.update(sql,
+                d.getCantidad(),
+                d.getProductosId(),
+                d.getUsuariosId()
+        );
     }
 
-    public int eliminarDetalleCarrito(int id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'eliminarDetalleCarrito'");
+    // PUT
+    public int actualizar(DetallesCarrito d) {
+        String sql = """
+            UPDATE detalles_carrito 
+            SET cantidad = ?, productos_id = ?, usuarios_id = ?
+            WHERE id = ?
+        """;
+        return conexion.update(sql,
+                d.getCantidad(),
+                d.getProductosId(),
+                d.getUsuariosId(),
+                d.getId()
+        );
+    }
+
+    // DELETE
+    public int eliminar(int id) {
+        String sql = "DELETE FROM detalles_carrito WHERE id = ?";
+        return conexion.update(sql, id);
     }
 }
