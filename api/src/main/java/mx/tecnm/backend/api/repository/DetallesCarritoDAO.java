@@ -26,4 +26,19 @@ public class DetallesCarritoDAO {
                 ))
                 .list();
     }
+
+    public DetallesCarrito consultarDetalleCarritoPorId(int id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'consultarDetalleCarritoPorId'");
+    }
+
+    public int actualizarDetalleCarrito(DetallesCarrito detallecarrito) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'actualizarDetalleCarrito'");
+    }
+
+    public int eliminarDetalleCarrito(int id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'eliminarDetalleCarrito'");
+    }
 }

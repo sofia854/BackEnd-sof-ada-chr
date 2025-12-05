@@ -1,48 +1,48 @@
 package mx.tecnm.backend.api.controller;
 
-import java.util.List;
-
+import mx.tecnm.backend.api.models.Pedidos;
+import mx.tecnm.backend.api.repository.PedidosDAO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import mx.tecnm.backend.api.repository.PedidosDAO;
-import mx.tecnm.backend.api.models.Pedidos;
+import java.util.List;
 
 @RestController
 @RequestMapping("/pedidos")
+@CrossOrigin("*")
 public class PedidosController {
 
     @Autowired
     private PedidosDAO pedidosDAO;
 
     @GetMapping
-    public ResponseEntity<List<Pedidos>> getAllPedidos() {
-        List<Pedidos> pedidos = pedidosDAO.findAll();
-        return pedidos.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(pedidos);
+    public List<Pedidos> getAll() {
+        return pedidosDAO.consultarPedidos();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Pedidos> getPedidoById(@PathVariable int id) {
-        Pedidos pedido = pedidosDAO.findById(id);
-        return pedido != null ? ResponseEntity.ok(pedido) : ResponseEntity.notFound().build();
+    public Pedidos getById(@PathVariable int id) {
+        return pedidosDAO.consultarPedidoPorId(id);
     }
 
+
     @PostMapping
-    public ResponseEntity<Pedidos> createPedido(@RequestBody Pedidos pedido) {
-        Pedidos creado = pedidosDAO.save(pedido);
-        return ResponseEntity.ok(creado);
+    public String registrar(@RequestBody Pedidos pedido) {
+        int result = pedidosDAO.registrarPedido(pedido);
+        return result > 0 ? "Pedido registrado correctamente" : "Error al registrar";
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Pedidos> updatePedido(@PathVariable int id, @RequestBody Pedidos pedido) {
-        Pedidos actualizado = pedidosDAO.update(id, pedido);
-        return actualizado != null ? ResponseEntity.ok(actualizado) : ResponseEntity.notFound().build();
+    public String actualizar(@PathVariable int id, @RequestBody Pedidos pedido) {
+        pedido.setId(id);
+        int result = pedidosDAO.actualizarPedido(pedido);
+        return result > 0 ? "Pedido actualizado correctamente" : "Error al actualizar";
     }
 
+    
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePedido(@PathVariable int id) {
-        boolean eliminado = pedidosDAO.delete(id);
-        return eliminado ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    public String eliminar(@PathVariable int id) {
+        int result = pedidosDAO.eliminarPedido(id);
+        return result > 0 ? "Pedido eliminado correctamente" : "Error al eliminar";
     }
 }

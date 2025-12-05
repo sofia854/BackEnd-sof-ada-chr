@@ -8,32 +8,32 @@ public class Pedidos {
     private int id;
     private LocalDateTime fecha;
     private UUID numero;
-    private double importe_productos;
-    private double importe_envio;
-    private int usuarios_id;
-    private int metodos_pago_id;
-    private LocalDateTime fecha_hora_pago;
-    private double importe_iva;
-    private double total;
+    private double importeProd;
+    private double importeEnv;
+    private int usuariosId;
+    private int metodosPago;
+    private LocalDateTime fechaHoraPago;
+    private Double importeIva; 
+    private Double total;      
 
     public Pedidos() {}
 
-    public Pedidos(int id, LocalDateTime fecha, UUID numero, double importe_productos,
-                   double importe_envio, int usuarios_id, int metodos_pago_id,
-                   LocalDateTime fecha_hora_pago, double importe_iva, double total) {
+    public Pedidos(int id, LocalDateTime fecha, UUID numero, double importeProd, double importeEnv,
+                   int usuariosId, int metodosPago, LocalDateTime fechaHoraPago,
+                   Double importeIva, Double total) {
         this.id = id;
         this.fecha = fecha;
         this.numero = numero;
-        this.importe_productos = importe_productos;
-        this.importe_envio = importe_envio;
-        this.usuarios_id = usuarios_id;
-        this.metodos_pago_id = metodos_pago_id;
-        this.fecha_hora_pago = fecha_hora_pago;
-        this.importe_iva = importe_iva;
+        this.importeProd = importeProd;
+        this.importeEnv = importeEnv;
+        this.usuariosId = usuariosId;
+        this.metodosPago = metodosPago;
+        this.fechaHoraPago = fechaHoraPago;
+        this.importeIva = importeIva;
         this.total = total;
     }
 
-    // Getters y Setters
+    // Getters y Setters  
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -43,24 +43,24 @@ public class Pedidos {
     public UUID getNumero() { return numero; }
     public void setNumero(UUID numero) { this.numero = numero; }
 
-    public double getImporteProd() { return importe_productos; }
-    public void setImporteProd(double importe_productos) { this.importe_productos = importe_productos; }
+    public double getImporteProd() { return importeProd; }
+    public void setImporteProd(double importeProd) { this.importeProd = importeProd; }
 
-    public double getImporteEnv() { return importe_envio; }
-    public void setImporteEnv(double importe_envio) { this.importe_envio = importe_envio; }
+    public double getImporteEnv() { return importeEnv; }
+    public void setImporteEnv(double importeEnv) { this.importeEnv = importeEnv; }
 
-    public int getUsuariosId() { return usuarios_id; }
-    public void setUsuariosId(int usuarios_id) { this.usuarios_id = usuarios_id; }
+    public int getUsuariosId() { return usuariosId; }
+    public void setUsuariosId(int usuariosId) { this.usuariosId = usuariosId; }
 
-    public int getMetodosPago() { return metodos_pago_id; }
-    public void setMetodosPago(int metodos_pago_id) { this.metodos_pago_id = metodos_pago_id; }
+    public int getMetodosPago() { return metodosPago; }
+    public void setMetodosPago(int metodosPago) { this.metodosPago = metodosPago; }
 
-    public LocalDateTime getFechaHoraPago() { return fecha_hora_pago; }
-    public void setFechaHoraPago(LocalDateTime fecha_hora_pago) { this.fecha_hora_pago = fecha_hora_pago; }
+    public LocalDateTime getFechaHoraPago() { return fechaHoraPago; }
+    public void setFechaHoraPago(LocalDateTime fechaHoraPago) { this.fechaHoraPago = fechaHoraPago; }
 
-    public double getImporteIva() { return importe_iva; }
-    public void setImporteIva(double importe_iva) { this.importe_iva = importe_iva; }
+    public Double getImporteIva() { return importeIva; }
+    public void setImporteIva(Double importeIva) { this.importeIva = importeIva; }
 
-    public double getTotal() { return total; }
-    public void setTotal(double total) { this.total = total; }
+    public Double getTotal() { return total; }
+    public void setTotal(Double total) { this.total = total; }
 }
