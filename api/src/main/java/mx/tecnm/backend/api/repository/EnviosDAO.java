@@ -2,6 +2,7 @@ package mx.tecnm.backend.api.repository;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -12,13 +13,13 @@ import mx.tecnm.backend.api.models.Envios;
 public class EnviosDAO {
 
     @Autowired
-    private JdbcTemplate conexion; // Cambiado a JdbcTemplate para coincidir con tu ejemplo
+    private JdbcTemplate conexion; // Conexión a la BD
 
-    // RowMapper reutilizable para Envios, siguiendo el estilo de DetallesPedidosDAO
+    // RowMapper reutilizable para mapear filas de la BD a objetos Envios
     private final RowMapper<Envios> enviosRowMapper = (rs, rowNum) -> {
         Envios env = new Envios();
         
-        // Mapeo directo de columnas de la BD (asumiendo snake_case) a setters del modelo
+        // Mapeo directo de columnas (asumiendo snake_case en la BD)
         env.setId(rs.getInt("id"));
         env.setFecha_entrega(rs.getString("fecha_entrega")); 
         env.setFecha(rs.getString("fecha"));
@@ -31,26 +32,24 @@ public class EnviosDAO {
     };
 
     // 1. READ ALL (Consultar todos)
-    public List<Envios> consultarEnvios() {
+    public List<Envios> consultarTodos() {
         String sql = "SELECT id, fecha_entrega, fecha, estado, numero_seguimiento, domicilios_id, pedidos_id FROM envios";
-        // Usamos .query() con el RowMapper definido
         return conexion.query(sql, enviosRowMapper);
     }
 
     // 2. READ BY ID (Buscar por ID)
     public Envios buscarPorId(int id) {
         String sql = "SELECT id, fecha_entrega, fecha, estado, numero_seguimiento, domicilios_id, pedidos_id FROM envios WHERE id = ?";
-        // Usamos .queryForObject() para una sola fila
-        // Si no se encuentra, JdbcTemplate lanzará una excepción, la cual debe ser manejada en el Controller (o aquí con un try/catch)
         try {
             return conexion.queryForObject(sql, enviosRowMapper, id);
-        } catch (Exception e) {
-            // Retorna null si no se encuentra (similar a lo que hacía JdbcClient.optional().orElse(null))
+        } catch (EmptyResultDataAccessException e) {
+            // Retorna null si no se encuentra ningún registro con ese ID
             return null; 
         }
     }
 
     // 3. CREATE (Guardar)
+    // Retorna el número de filas afectadas (debería ser 1 si es exitoso)
     public int guardar(Envios envio) {
         String sql = "INSERT INTO envios (fecha_entrega, fecha, estado, numero_seguimiento, domicilios_id, pedidos_id) VALUES (?, ?, ?, ?, ?, ?)";
         return conexion.update(sql, 
@@ -64,7 +63,9 @@ public class EnviosDAO {
     }
 
     // 4. UPDATE (Actualizar)
+    // Retorna el número de filas afectadas (debería ser 1 si es exitoso)
     public int actualizar(Envios envio) {
+        // Asegúrate de que el 'id' del objeto Envios esté seteado
         String sql = "UPDATE envios SET fecha_entrega = ?, fecha = ?, estado = ?, numero_seguimiento = ?, domicilios_id = ?, pedidos_id = ? WHERE id = ?";
         return conexion.update(sql, 
             envio.getFecha_entrega(), 
@@ -73,11 +74,12 @@ public class EnviosDAO {
             envio.getNumero_seguimiento(), 
             envio.getDomicilios_id(), 
             envio.getPedidos_id(),
-            envio.getId() // El ID es el último parámetro
+            envio.getId() // Condición WHERE
         );
     }
 
     // 5. DELETE (Eliminar)
+    // Retorna el número de filas afectadas (debería ser 1 si es exitoso)
     public int eliminar(int id) {
         String sql = "DELETE FROM envios WHERE id = ?";
         return conexion.update(sql, id);

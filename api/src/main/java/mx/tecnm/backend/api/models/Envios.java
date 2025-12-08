@@ -1,9 +1,10 @@
 package mx.tecnm.backend.api.models;
 
 public class Envios {
+    // Corresponden a las columnas de la tabla 'envios'
     private int id;
-    private String fecha_entrega;
-    private String fecha;
+    private String fecha_entrega; // Asumiendo que es String (TIMESTAMP/DATE)
+    private String fecha;         // Asumiendo que es String (TIMESTAMP/DATE)
     private String estado;
     private String numero_seguimiento;
     private int domicilios_id;

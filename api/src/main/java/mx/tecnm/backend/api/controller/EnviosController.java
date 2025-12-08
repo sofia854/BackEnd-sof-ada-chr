@@ -1,7 +1,9 @@
 package mx.tecnm.backend.api.controller;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,77 +15,85 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import mx.tecnm.backend.api.models.Envios;
-import mx.tecnm.backend.api.repository.EnviosDAO;
+import mx.tecnm.backend.api.repository.EnviosDAO; // Importar el DAO correcto
 
 @RestController
-@RequestMapping("/envios")
+@RequestMapping("/envios") // Endpoint base para Envios
 public class EnviosController {
-
+    
     @Autowired
-    EnviosDAO enviosDAO;
+    EnviosDAO repo; // Inyecta el DAO de Envios
 
-    // 1. READ ALL
-    // GET /envios
+    // 1. GET - Consultar TODOS (READ ALL)
+    // URL: GET http://localhost:8080/envios
     @GetMapping()
-    public ResponseEntity<List<Envios>> obtenerEnvios() {
-        List<Envios> lista = enviosDAO.consultarEnvios();
-        return ResponseEntity.ok(lista);
+    public ResponseEntity<List<Envios>> obtenerTodos() {
+        List<Envios> envios = repo.consultarTodos();
+        if (envios.isEmpty()) {
+            return ResponseEntity.noContent().build(); // 204 No Content si está vacío
+        }
+        return ResponseEntity.ok(envios); // 200 OK con la lista
     }
 
-    // 2. READ BY ID
-    // GET /envios/{id}
+    // 2. GET - Consultar por ID (READ BY ID)
+    // URL: GET http://localhost:8080/envios/1
     @GetMapping("/{id}")
-    public ResponseEntity<Envios> obtenerEnvioPorId(@PathVariable int id) {
-        Envios envio = enviosDAO.buscarPorId(id);
-        if (envio != null) {
-            return ResponseEntity.ok(envio);
-        } else {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<Envios> obtenerPorId(@PathVariable int id) {
+        Envios envio = repo.buscarPorId(id);
+        if (envio == null) {
+            return ResponseEntity.notFound().build(); // 404 Not Found si no existe
+
         }
+        return ResponseEntity.ok(envio); // 200 OK con el objeto
     }
 
-    // 3. CREATE
-    // POST /envios
+    // 3. POST - Crear nuevo (CREATE)
+    // URL: POST http://localhost:8080/envios (Body JSON con datos del envío, sin 'id')
     @PostMapping
-    public ResponseEntity<String> crearEnvio(@RequestBody Envios nuevoEnvio) {
-        int resultado = enviosDAO.guardar(nuevoEnvio);
-        if (resultado > 0) {
-            return ResponseEntity.status(201).body("Envío registrado con éxito.");
+    public ResponseEntity<String> crearEnvio(@RequestBody Envios envio) {
+        // El 'id' se genera en la BD, se insertan los demás campos
+        int filas = repo.guardar(envio);
+
+        if (filas == 1) {
+            return ResponseEntity.status(HttpStatus.CREATED).body("Envío creado correctamente :)"); // 201 Created
         } else {
-            return ResponseEntity.internalServerError().body("Error al registrar el envío.");
+            return ResponseEntity.badRequest().body("No se pudo crear el envío :("); // 400 Bad Request
         }
     }
 
-    // 4. UPDATE
-    // PUT /envios/{id}
+    // 4. PUT - Modificar existente (UPDATE)
+    // URL: PUT http://localhost:8080/envios/1 (Body JSON con datos del envío, incluyendo 'id' o usando @PathVariable)
     @PutMapping("/{id}")
-    public ResponseEntity<String> actualizarEnvio(@PathVariable int id, @RequestBody Envios envioActualizado) {
-        envioActualizado.setId(id);
-        int resultado = enviosDAO.actualizar(envioActualizado);
+    public ResponseEntity<String> modificarEnvio(@PathVariable int id, @RequestBody Envios envio) {
+        envio.setId(id); // Asegura que el ID del objeto coincida con el path variable
         
-        if (resultado > 0) {
-            return ResponseEntity.ok("Envío actualizado con éxito.");
-        } else if (resultado == 0) {
-            // No se encontró el ID para actualizar
-            return ResponseEntity.notFound().build();
+        // Primero verifica si existe
+        if (repo.buscarPorId(id) == null) {
+             return ResponseEntity.notFound().build(); // 404 Not Found si no existe
+        }
+        
+        int filas = repo.actualizar(envio);
+        
+        if (filas == 1) {
+            return ResponseEntity.ok("Envío modificado correctamente :)"); // 200 OK
         } else {
-            return ResponseEntity.internalServerError().body("Error al actualizar el envío.");
+            // Este caso es poco probable si ya verificamos la existencia, pero lo dejamos como fallback
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al modificar el envío :("); // 500
         }
     }
 
-    // 5. DELETE
-    // DELETE /envios/{id}
+
+    // 5. DELETE - Eliminar por ID (DELETE)
+    // URL: DELETE http://localhost:8080/envios/1
     @DeleteMapping("/{id}")
     public ResponseEntity<String> eliminarEnvio(@PathVariable int id) {
-        int resultado = enviosDAO.eliminar(id);
+        int filas = repo.eliminar(id);
         
-        if (resultado > 0) {
-            return ResponseEntity.ok("Envío eliminado correctamente.");
-        } else if (resultado == 0) {
-            // No se encontró el ID para eliminar
-            return ResponseEntity.notFound().build();
+        if (filas == 1) {
+            return ResponseEntity.ok("Envío eliminado correctamente :)"); // 200 OK
         } else {
-            return ResponseEntity.internalServerError().body("Error al eliminar el envío.");
+            // Si filas es 0, significa que el registro no existía
+            return ResponseEntity.notFound().build(); // 404 Not Found
         }
     }
 }
