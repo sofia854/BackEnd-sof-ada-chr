@@ -1,66 +1,51 @@
 package mx.tecnm.backend.api.models;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 public class Pedidos {
 
     private int id;
-    private LocalDateTime fecha;
+    private Timestamp fecha;
     private UUID numero;
-    private double importeProd;
-    private double importeEnv;
-    private int usuariosId;
-    private int metodosPago;
-    private LocalDateTime fechaHoraPago;
-    private Double importeIva; 
-    private Double total;      
+    private double importe_productos;
+    private double importe_envio;
+    private int usuarios_id;
+    private int metodos_pago_id;
+    private Timestamp fecha_hora_pago;
+    private double importe_iva;
+    private double total;
 
     public Pedidos() {}
 
-    public Pedidos(int id, LocalDateTime fecha, UUID numero, double importeProd, double importeEnv,
-                   int usuariosId, int metodosPago, LocalDateTime fechaHoraPago,
-                   Double importeIva, Double total) {
-        this.id = id;
-        this.fecha = fecha;
-        this.numero = numero;
-        this.importeProd = importeProd;
-        this.importeEnv = importeEnv;
-        this.usuariosId = usuariosId;
-        this.metodosPago = metodosPago;
-        this.fechaHoraPago = fechaHoraPago;
-        this.importeIva = importeIva;
-        this.total = total;
-    }
-
-    // Getters y Setters  
+    // Getters y Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
-    public LocalDateTime getFecha() { return fecha; }
-    public void setFecha(LocalDateTime fecha) { this.fecha = fecha; }
+    public Timestamp getFecha() { return fecha; }
+    public void setFecha(Timestamp fecha) { this.fecha = fecha; }
 
     public UUID getNumero() { return numero; }
     public void setNumero(UUID numero) { this.numero = numero; }
 
-    public double getImporteProd() { return importeProd; }
-    public void setImporteProd(double importeProd) { this.importeProd = importeProd; }
+    public double getImporte_productos() { return importe_productos; }
+    public void setImporte_productos(double importe_productos) { this.importe_productos = importe_productos; }
 
-    public double getImporteEnv() { return importeEnv; }
-    public void setImporteEnv(double importeEnv) { this.importeEnv = importeEnv; }
+    public double getImporte_envio() { return importe_envio; }
+    public void setImporte_envio(double importe_envio) { this.importe_envio = importe_envio; }
 
-    public int getUsuariosId() { return usuariosId; }
-    public void setUsuariosId(int usuariosId) { this.usuariosId = usuariosId; }
+    public int getUsuarios_id() { return usuarios_id; }
+    public void setUsuarios_id(int usuarios_id) { this.usuarios_id = usuarios_id; }
 
-    public int getMetodosPago() { return metodosPago; }
-    public void setMetodosPago(int metodosPago) { this.metodosPago = metodosPago; }
+    public int getMetodos_pago_id() { return metodos_pago_id; }
+    public void setMetodos_pago_id(int metodos_pago_id) { this.metodos_pago_id = metodos_pago_id; }
 
-    public LocalDateTime getFechaHoraPago() { return fechaHoraPago; }
-    public void setFechaHoraPago(LocalDateTime fechaHoraPago) { this.fechaHoraPago = fechaHoraPago; }
+    public Timestamp getFecha_hora_pago() { return fecha_hora_pago; }
+    public void setFecha_hora_pago(Timestamp fecha_hora_pago) { this.fecha_hora_pago = fecha_hora_pago; }
 
-    public Double getImporteIva() { return importeIva; }
-    public void setImporteIva(Double importeIva) { this.importeIva = importeIva; }
+    public double getImporte_iva() { return importe_iva; }
+    public void setImporte_iva(double importe_iva) { this.importe_iva = importe_iva; }
 
-    public Double getTotal() { return total; }
-    public void setTotal(Double total) { this.total = total; }
+    public double getTotal() { return total; }
+    public void setTotal(double total) { this.total = total; }
 }

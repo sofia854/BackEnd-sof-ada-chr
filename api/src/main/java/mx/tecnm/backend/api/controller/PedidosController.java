@@ -3,46 +3,77 @@ package mx.tecnm.backend.api.controller;
 import mx.tecnm.backend.api.models.Pedidos;
 import mx.tecnm.backend.api.repository.PedidosDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/pedidos")
-@CrossOrigin("*")
+@CrossOrigin(origins = "*")
 public class PedidosController {
 
     @Autowired
     private PedidosDAO pedidosDAO;
 
+    // ===========================
+    //       OBTENER TODOS
+    // ===========================
     @GetMapping
-    public List<Pedidos> getAll() {
-        return pedidosDAO.consultarPedidos();
+    public ResponseEntity<List<Pedidos>> getAll() {
+        return ResponseEntity.ok(pedidosDAO.findAll());
     }
 
+    // ===========================
+    //     OBTENER POR ID
+    // ===========================
     @GetMapping("/{id}")
-    public Pedidos getById(@PathVariable int id) {
-        return pedidosDAO.consultarPedidoPorId(id);
+    public ResponseEntity<Pedidos> getById(@PathVariable int id) {
+        try {
+            return ResponseEntity.ok(pedidosDAO.findById(id));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-
+    // ===========================
+    //          CREAR
+    // ===========================
     @PostMapping
-    public String registrar(@RequestBody Pedidos pedido) {
-        int result = pedidosDAO.registrarPedido(pedido);
-        return result > 0 ? "Pedido registrado correctamente" : "Error al registrar";
+    public ResponseEntity<String> create(@RequestBody Pedidos pedido) {
+
+        int result = pedidosDAO.save(pedido);
+
+        return (result > 0)
+                ? ResponseEntity.ok("Pedido registrado con éxito.")
+                : ResponseEntity.internalServerError().body("Error al registrar el pedido.");
     }
 
+    // ===========================
+    //        ACTUALIZAR
+    // ===========================
     @PutMapping("/{id}")
-    public String actualizar(@PathVariable int id, @RequestBody Pedidos pedido) {
+    public ResponseEntity<String> update(@PathVariable int id, @RequestBody Pedidos pedido) {
+
         pedido.setId(id);
-        int result = pedidosDAO.actualizarPedido(pedido);
-        return result > 0 ? "Pedido actualizado correctamente" : "Error al actualizar";
+
+        int result = pedidosDAO.update(pedido);
+
+        return (result > 0)
+                ? ResponseEntity.ok("Pedido actualizado correctamente.")
+                : ResponseEntity.internalServerError().body("Error al actualizar.");
     }
 
-    
+    // ===========================
+    //         ELIMINAR
+    // ===========================
     @DeleteMapping("/{id}")
-    public String eliminar(@PathVariable int id) {
-        int result = pedidosDAO.eliminarPedido(id);
-        return result > 0 ? "Pedido eliminado correctamente" : "Error al eliminar";
+    public ResponseEntity<String> delete(@PathVariable int id) {
+
+        int result = pedidosDAO.delete(id);
+
+        return (result > 0)
+                ? ResponseEntity.ok("Pedido eliminado.")
+                : ResponseEntity.notFound().build();
     }
 }

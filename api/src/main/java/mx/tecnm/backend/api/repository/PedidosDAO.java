@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,84 +15,87 @@ public class PedidosDAO {
     @Autowired
     private JdbcTemplate conexion;
 
-    private final RowMapper<Pedidos> pedidosMapper = (rs, rowNum) -> {
+    private final RowMapper<Pedidos> mapper = (rs, rowNum) -> {
         Pedidos p = new Pedidos();
         p.setId(rs.getInt("id"));
-        p.setFecha(rs.getObject("fecha", LocalDateTime.class));
+        p.setFecha(rs.getTimestamp("fecha"));
         p.setNumero((UUID) rs.getObject("numero"));
-        p.setImporteProd(rs.getDouble("importe_productos"));
-        p.setImporteEnv(rs.getDouble("importe_envio"));
-        p.setUsuariosId(rs.getInt("usuarios_id"));
-        p.setMetodosPago(rs.getInt("metodos_pago_id"));
-        p.setFechaHoraPago(rs.getObject("fecha_hora_pago", LocalDateTime.class));
-        p.setImporteIva(rs.getDouble("importe_iva"));
+        p.setImporte_productos(rs.getDouble("importe_productos"));
+        p.setImporte_envio(rs.getDouble("importe_envio"));
+        p.setUsuarios_id(rs.getInt("usuarios_id"));
+        p.setMetodos_pago_id(rs.getInt("metodos_pago_id"));
+        p.setFecha_hora_pago(rs.getTimestamp("fecha_hora_pago"));
+        p.setImporte_iva(rs.getDouble("importe_iva"));
         p.setTotal(rs.getDouble("total"));
         return p;
     };
 
-    // Consultar todos
-    public List<Pedidos> consultarPedidos() {
-        String sql = "SELECT * FROM pedidos ORDER BY fecha DESC";
-        return conexion.query(sql, pedidosMapper);
+    // ================================
+    //            CRUD
+    // ================================
+
+    public List<Pedidos> findAll() {
+        return conexion.query("SELECT * FROM pedidos", mapper);
     }
 
-    // Consultar por ID
-    public Pedidos consultarPedidoPorId(int id) {
-        String sql = "SELECT * FROM pedidos WHERE id = ?";
-        return conexion.queryForObject(sql, pedidosMapper, id);
-    }
-
-    // Registrar pedido
-    public int registrarPedido(Pedidos pedido) {
-        String sql = """
-            INSERT INTO pedidos 
-            (fecha, numero, importe_productos, importe_envio, usuarios_id, metodos_pago_id, fecha_hora_pago) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """;
-
-        UUID numero = pedido.getNumero() != null ? pedido.getNumero() : UUID.randomUUID();
-        pedido.setNumero(numero);
-
-        return conexion.update(sql,
-                pedido.getFecha(),
-                numero,
-                pedido.getImporteProd(),
-                pedido.getImporteEnv(),
-                pedido.getUsuariosId(),
-                pedido.getMetodosPago(),
-                pedido.getFechaHoraPago()
+    public Pedidos findById(int id) {
+        return conexion.queryForObject(
+                "SELECT * FROM pedidos WHERE id = ?",
+                mapper,
+                id
         );
     }
 
-    // Actualizar pedido
-    public int actualizarPedido(Pedidos pedido) {
-        String sql = """
+    public int save(Pedidos p) {
+        return conexion.update("""
+            INSERT INTO pedidos
+            (importe_productos, importe_envio, usuarios_id, metodos_pago_id, fecha_hora_pago)
+            VALUES (?, ?, ?, ?, ?)
+        """,
+                p.getImporte_productos(),
+                p.getImporte_envio(),
+                p.getUsuarios_id(),
+                p.getMetodos_pago_id(),
+                p.getFecha_hora_pago()
+        );
+    }
+
+    public int update(Pedidos p) {
+        return conexion.update("""
             UPDATE pedidos SET 
-                fecha = ?, 
-                numero = ?, 
                 importe_productos = ?, 
                 importe_envio = ?, 
                 usuarios_id = ?, 
                 metodos_pago_id = ?, 
                 fecha_hora_pago = ?
             WHERE id = ?
-        """;
-
-        return conexion.update(sql,
-                pedido.getFecha(),
-                pedido.getNumero(),
-                pedido.getImporteProd(),
-                pedido.getImporteEnv(),
-                pedido.getUsuariosId(),
-                pedido.getMetodosPago(),
-                pedido.getFechaHoraPago(),
-                pedido.getId()
+        """,
+                p.getImporte_productos(),
+                p.getImporte_envio(),
+                p.getUsuarios_id(),
+                p.getMetodos_pago_id(),
+                p.getFecha_hora_pago(),
+                p.getId()
         );
     }
 
-    // Eliminar pedido
-    public int eliminarPedido(int id) {
-        String sql = "DELETE FROM pedidos WHERE id = ?";
-        return conexion.update(sql, id);
+    public int delete(int id) {
+        return conexion.update("DELETE FROM pedidos WHERE id = ?", id);
+    }
+
+    // =========================================
+    // Actualizar total desde detalles (si usas)
+    // =========================================
+
+    public void recalcularTotales(int pedidoId) {
+        conexion.update("""
+            UPDATE pedidos
+            SET importe_productos = (
+                SELECT COALESCE(SUM(importe), 0) 
+                FROM detalles_pedidos 
+                WHERE pedidos_id = ?
+            )
+            WHERE id = ?
+        """, pedidoId, pedidoId);
     }
 }

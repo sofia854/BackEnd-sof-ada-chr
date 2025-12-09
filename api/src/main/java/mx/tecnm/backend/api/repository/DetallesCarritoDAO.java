@@ -68,4 +68,5 @@ public class DetallesCarritoDAO {
         String sql = "DELETE FROM detalles_carrito WHERE id = ?";
         return conexion.update(sql, id);
     }
+
 }
